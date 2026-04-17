@@ -225,8 +225,9 @@ type SolveCertificate = {
     - response
         ```typescript
         {
-            "status": ["waiting"|"judging"|"finished"],
-            "result": ["AC", "WA", "TLE", "MLE", "RE"]?
+            "status": "waiting" | "judging" | "finished",
+            "result": "AC" | "WA" | "TLE" | "MLE" | "RE" | undefined,
+            "additionalInfo": string | undefined,
         }
         ```
 
