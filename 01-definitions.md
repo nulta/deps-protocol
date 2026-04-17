@@ -220,7 +220,7 @@ type SolveCertificate = {
         ```
         submissionId: 채점 번호
 
-- ```GET /api/deps/judgeStatus/{submissionId}```
+- ```GET /api/deps/judge-status/{submissionId}```
     submissionId: 채점 번호
     - response
         ```typescript
