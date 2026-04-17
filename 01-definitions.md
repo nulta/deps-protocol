@@ -109,7 +109,7 @@ type Identity = {
     // 아이덴티티 식별자. Base64로 인코딩된 Ed25519 공개키.
     identity: string,
 
-    // 위의 IdentityInfo 타입의 오브젝트를 typescript으로 직렬화한 문자열.
+    // 위의 IdentityInfo 타입의 오브젝트를 JSON으로 직렬화한 문자열.
     info: string,
 
     // info 문자열을 identity에 대응하는 비밀 키로 서명한 값.
