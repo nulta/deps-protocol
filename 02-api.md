@@ -1,5 +1,7 @@
 # DEPS - API 규격
 
+## 기본 원칙
+
 DEPS에서 정의하는 모든 API는 **반드시** HTTPS만을 사용한다.
 
 DEPS에서 정의하는 모든 API는 `/_deps/`를 기본 경로로 사용한다. API의 경로는 **반드시** 도메인의 루트에서 시작해야 한다.
@@ -8,15 +10,37 @@ DEPS에서 정의하는 모든 API는 `/_deps/`를 기본 경로로 사용한다
     http://203.0.113.123/_deps/...            // X, HTTPS를 사용해야 함
     https://example.com/homeserver/_deps/...  // X, 도메인 루트에 존재해야 함
 
-
 - 홈 서버의 모든 API는 `/_deps/home/`를 베이스로 한다.
 - 문제 서버의 모든 API는 `/_deps/judge/`를 베이스로 한다.
 - 하나의 도메인 아래에 홈 서버와 문제 서버가 같이 있을 수도 있다.
     - 이 경우 둘의 공개 키는 같을 수도, 다를 수도 있다.
+    - 어떤 도메인을 해석할 때 이를 홈서버로 해석할 것인지, 문제서버로 해석할 것인지는, 문맥에 따라 달라지게 된다
+
+DEPS에서 정의하는 모든 API는, 달리 정의하지 않는 한, JSON을 사용하여 통신한다. 서버는 JSON 데이터를 전송할 때 `Content-Type` 헤더를 `application/json`으로 설정하여야 한다.
+
+### 오류 응답
+
+DEPS에서 정의하는 API는 오류 상황이 아닐 때 `2xx` 계열의 HTTP 상태 코드를 반환하여야 한다.
+
+만약 `4xx` 또는 `5xx` 을 반환하는 경우, 그 body는 달리 정의하지 않는 한 다음과 같이 한다. 이를 `오류 응답`이라 한다.
+
+```typescript
+{
+    "error": string,
+    // 서버는 그 밖에 다른 필드를 포함할 수 있음
+}
+```
+
+> [!NOTE]
+> `error`의 내용은 영어로 이해하기 쉽게 작성하는 것을 권장한다.
+
+- `error`의 내용은 서버에서 임의로 작성한다.
 
 ## 홈 서버
 
 ### GET `/_deps/home/info`
+
+홈서버의 기본 정보를 받아온다.
 
 #### 응답
 ```typescript
@@ -25,9 +49,12 @@ DEPS에서 정의하는 모든 API는 `/_deps/`를 기본 경로로 사용한다
 }
 ```
 
-- key: Base64로 인코딩된 이 서버의 Ed25519 공개 키
+- key: 이 서버의 **인코딩된 공개 키**
+
 
 ### GET `/_deps/home/identity/[identity]`
+
+홈서버에 등록된 아이덴티티의 정보를 받아온다.
 
 #### 요청
 - `[identity]`: `아이덴티티 식별자`
@@ -46,7 +73,46 @@ DEPS에서 정의하는 모든 API는 `/_deps/`를 기본 경로로 사용한다
 - 이 홈서버에 등록되지 않은 아이덴티티라면, `404 Not Found`
 
 
+### GET `/_deps/home/identity/[identity]/handle`
+
+홈서버에 등록된 아이덴티티의 핸들네임을 받아온다.
+
+#### 요청
+- `[identity]`: `아이덴티티 식별자`
+
+#### 응답
+```typescript
+{
+    "identity": string,
+    "handle": string | null,
+}
+```
+
+- `identity`: 아이덴티티 식별자. `[identity]`와 동일한 값.
+- `handle`: 이 서버에서 해당 아이덴티티에게 부여된 핸들네임. null일 수 있음.
+
+#### 예외
+- 이 홈서버에 등록되지 않은 아이덴티티라면, `404 Not Found`
+
+
 ### GET `/_deps/home/handle/[handle]`
+
+#### 요청
+- `[handle]`: 올바른 핸들네임
+    - 단, 이 서버에서 발급한 핸들네임만 쿼리할 수 있다.
+
+#### 응답
+```typescript
+// "데이터 정의" 문서에서 정의된 "Identity" 정의와 같음
+{
+    "key": string,
+    "data": IdentityInfo,
+    "sign": string
+}
+```
+
+
+### GET `/_deps/home/`
 
 #### 요청
 - `[handle]`: 올바른 `핸들네임`
@@ -80,7 +146,8 @@ DEPS에서 정의하는 모든 API는 `/_deps/`를 기본 경로로 사용한다
 
 문제 목록을 페이지네이션하여 받아온다.
 
-- `offset`: **선택적.** 문제 목록의 맨 앞에서 이 개수만큼의 데이터를 스킵한다
+- `offset`: **선택적.** 문제 목록의 맨 앞에서 이 개수만큼의 데이터를 스킵한다.
+    - 없으면 0으로 가정한다.
 - `limit`: 받아올 문제 개수의 상한값
 
 #### 응답
@@ -97,7 +164,7 @@ DEPS에서 정의하는 모든 API는 `/_deps/`를 기본 경로로 사용한다
 - `title`: 문제의 제목
 - `totalCount`: 서버에 존재하는 문제 개수
 
-잘 정렬된 문제 목록에서 일부를 반환한다. 
+잘 정렬된 전체 문제 목록 중에서, 일부를 반환한다. 
 
 ### GET `/_deps/judge/problem/[problemId]`
 
@@ -175,7 +242,9 @@ type SubmissionFile = {
 - data
     - `problemId`: 문제 ID
     - `invalidBefore`: 문제가 개정된 시각.
-        - 이 시점 이전에 발행된 `문제 증표`들은 무효하다.
+        - 이 시점 이전에 발행된 `문제 증표`들은 무효함을 선언한다.
+
+data는 `invalidBefore`의 내림차순으로 정렬되어 있어야 한다.
 
 ### GET `/_deps/judge/submission/[submissionId]`
 
@@ -217,8 +286,8 @@ type SubmissionFile = {
 ```typescript
 {
     "key": string,
-    "payload": {
-        "user": string,
+    "data": {
+        "identity": string,
         "problemId": string,
         "score": number,
         "signedAt": Date,
@@ -227,11 +296,11 @@ type SubmissionFile = {
 }
 ```
 
-- `key`: 문제서버 공개키
-- `user`: 유저 공개키
-- `problem_id`: 문제 id
+- `key`: 문제서버의 공개키
+- `identity`: 아이덴티티 식별자
+- `problemId`: 문제 id. `#ProblemId::domain.name` 형태.
 - `score`
     - `[0, 1]` 범위의 실수이다.
-    - 1일 때는 AC, `[0, 1)`일 때는 PC로 간주한다.
+    - `1.0`일 때는 AC, `[0, 1)`일 때는 PC로 간주한다.
 - `signedAt`: 문제를 푼 시간
-- `sign`: payload의 값을 직렬화한 문자열을 서버의 key로 서명한 값
+- `sign`: data를 key로 서명한 값. definitions 문서 참고.
