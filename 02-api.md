@@ -623,7 +623,7 @@ type SolveCertificate = {
 // OR //
 | {
     "status": "finished",
-    "verdict": "AC" | "PC" | "WA" | "TLE" | "MLE" | "RE" | "CE" | "UE" | "NA",
+    "verdict": "AC" | "PC" | "WA" | "TLE" | "MLE" | "OLE" | "RE" | "CE" | "UE" | "NA",
     "additionalInfo": string?,
 
     "certificate": SolveCertificate?,
@@ -641,6 +641,7 @@ type SolveCertificate = {
     - `WA`: 오답
     - `TLE`: 시간 제한 초과
     - `MLE`: 메모리 제한 초과
+    - `OLE`: 출력 제한 초과
     - `RE`: 런타임 에러
     - `CE`: 컴파일 에러
     - `UE`: 기타 에러
