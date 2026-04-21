@@ -1,5 +1,5 @@
 # DEPS 프로토콜
-*Decentralized Problem Solving :: Rev 0.2*
+*Decentralized Problem Solving :: Rev 0.3*
 
 ## 요약
 
