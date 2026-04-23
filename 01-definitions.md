@@ -293,3 +293,8 @@ type SolveCertificate = {
     - 충분히 최신인 에라타 목록을 이미 알고 있다면, 에라타 받아오는 것은 건너뛸 수 있다.
     - 아니라면, POST `/_deps/judge/errata/query` 혹은 GET `/_deps/judge/errata` 페이지네이션을 통해, 해당 문제의 에라타 여부를 받아온다.
 8. 해당 문제에 에라타가 없거나, 선언 시점이 `data.signedAt`보다 과거가 맞음을 확인한다.
+
+----
+
+**이전 문서** [README](README.md)
+**다음 문서** [02 - API 규격](02-api.md)
