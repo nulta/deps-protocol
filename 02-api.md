@@ -459,7 +459,7 @@ type MinMaxRequirement = {
 
 - `id`: 문제의 id
 - `title`: 문제의 제목
-- `content`: Markdown 형식으로 쓰여진 문제의 본문
+- `content`: [MyST Markdown](https://mystmd.org/) 형식으로 쓰여진 문제의 본문
 - `powFactor`: 제출은 이 **PoW 수준** 값을 만족해야 한다.
 - `formats`: 이 문제에서 사용할 수 있는 **제출 형식** 목록. 키 값은 해당 형식의 이름이다.
 
