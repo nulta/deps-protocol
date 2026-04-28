@@ -439,6 +439,7 @@ type MinMaxRequirement = {
     "id": string,
     "title": string,
     "content": string,
+    "invalidBefore": Date?,
 
     "powFactor": number,
     "formats": {
@@ -460,6 +461,8 @@ type MinMaxRequirement = {
 - `id`: 문제의 id
 - `title`: 문제의 제목
 - `content`: [MyST Markdown](https://mystmd.org/) 형식으로 쓰여진 문제의 본문
+- `invalidBefore`: 이 문제에 마지막으로 등록된 **에라타**의 시각. 이 시각보다 앞선 본 문제의 문제증표는 전부 무효하다.
+    - undefined일 경우, 본 문제에 등록된 에라타는 없다.
 - `powFactor`: 제출은 이 **PoW 수준** 값을 만족해야 한다.
 - `formats`: 이 문제에서 사용할 수 있는 **제출 형식** 목록. 키 값은 해당 형식의 이름이다.
 
@@ -694,20 +697,21 @@ type SolveCertificate = {
 ```typescript
 {
     "data": {
-        [string]: Date,
-    },
+        "problem": string,
+        "at": Date,
+    }[],
     "totalCount": number,
 }
 ```
 
 - data
-    - `[string]` 키: 문제 ID.
+    - `problem`: 문제 ID.
         - `<PROBLEM_ID>::<DOMAIN>` 형태.
         - 이 때 `<DOMAIN>`은 이 서버의 도메인과 같아야 한다.
-    - `Date` 값: 문제가 개정된 시각.
+    - `at`: 문제가 개정된 시각.
         - 이 시점 이전에 발행된 `문제 증표`들은 무효함을 선언한다.
 
-페이지네이션은 에라타 생성 시각 내림차순으로 정렬되어야 한다. 단, JSON 오브젝트 내부의 키 값 사이 순서는 보장되지 않는다.
+페이지네이션은 에라타 생성 시각 내림차순으로 정렬되어야 한다.
 
 
 ### POST `/errata/query`
