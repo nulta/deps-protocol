@@ -179,7 +179,7 @@ type SignedProofed<T> = {
     // 이하 3개는 Signed<T>의 정의와 같음
     data: T & { signedAt: Date, intent: string },
     key: string,
-    sign: string,
+    sign: SignKey,
 
     // Proof of Work를 만족하기 위해 포함되는 임의의 문자열
     pow: string,
