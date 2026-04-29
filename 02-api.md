@@ -259,7 +259,7 @@ DEPS에서 제공하는 API들은 페이지네이션을 공통적으로 다음�
         "signedAt": Date,
         "intent": "deps/postIdentitySolveCert",
     },
-    "sign": string,
+    "sign": SignKey,
 }
 ```
 
@@ -569,7 +569,7 @@ type SubmissionFile = {
         "signedAt": Date,
         "intent": "deps/problemSubmit",
     }
-    "sign": string,
+    "sign": SignKey,
     "pow": string,
 }
 ```
