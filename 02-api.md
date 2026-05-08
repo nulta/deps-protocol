@@ -439,6 +439,7 @@ type MinMaxRequirement = {
     "id": string,
     "title": string,
     "content": string,
+    "language": string,
     "invalidBefore": Date?,
 
     "powFactor": number,
@@ -461,6 +462,9 @@ type MinMaxRequirement = {
 - `id`: 문제의 id
 - `title`: 문제의 제목
 - `content`: [MyST Markdown](https://mystmd.org/) 형식으로 쓰여진 문제의 본문
+- `language`: 문제의 본문이 어떤 언어로 쓰인 것인지를 나타내는 언어 코드.
+    - 언어 코드는 [ISO 639](https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes) 또는 IETF BCP 47을 사용한다. 이를테면 `ko` `ko-KR` `en-US` `zh-Hant` 등과 같다.
+    - 다국어 문제 지원은 [deps.localization](extensions/deps.localization.md) 익스텐션에서 다룬다.
 - `invalidBefore`: 이 문제에 마지막으로 등록된 **에라타**의 시각. 이 시각보다 앞선 본 문제의 문제증표는 전부 무효하다.
     - undefined일 경우, 본 문제에 등록된 에라타는 없다.
 - `powFactor`: 제출은 이 **PoW 수준** 값을 만족해야 한다.
